@@ -1,0 +1,411 @@
+﻿<html>
+<head>
+	<title>Web graphics</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+	<style>
+		body {
+			font-family: Monospace;
+			background-color: #000;
+			color: #000;
+			margin: 0px;
+			overflow: hidden;
+		}
+
+		#info {
+			position: absolute;
+			padding: 10px;
+			width: 100%;
+			text-align: center;
+		}
+		
+		#compinfo {			
+			position:fixed;
+			width:25%;
+			height:25%;
+			background:#cce0ff;
+			left:10px;
+			top:69%;
+			text-align: center;
+		}
+
+		a {
+			text-decoration: underline;
+			cursor: pointer;
+		}
+
+	</style>
+	<style type="text/css"></style>
+</head>
+<body>
+		<div id="info">Web graphics Simulation<br>
+			Ανάλυση & Ανάπτυξη Λογισμικού<br>
+		</div>
+		<script src="./js/three.js"></script>
+		<script src="./js/three.min.js"></script>
+		<script src="./js/Detector.js"></script>
+		<script src="./js/stats.min.js"></script>
+		<script src="./js/OrbitControls.js"></script>
+		<script src="./js/MyShapes.js"></script>
+		<script src='./js/DAT.GUI.min.js'></script>
+		<script src="./js/ThreeCSG.js"></script>
+ 
+ <div id="compinfo">
+	<h2>Component Information</h2>
+	<table align="center">
+		<tr><th id="compName"></th></tr>
+		<tr><td><object id="compInfoPage" type="text/html" data=""></object></td></tr>
+	</table>
+</div>
+		<script>	
+			function onWindowResize() 
+			{
+				//stin allagi megethous parathurou dimiourgei ksana tin eikona
+				camera.aspect = window.innerWidth / window.innerHeight;
+				camera.updateProjectionMatrix();
+				renderer.setSize( window.innerWidth, window.innerHeight );
+			}
+
+			function render() 
+			{
+				requestAnimationFrame( render );
+				spinFan.rotation.y -= 0.05;
+				controls.update();
+				stats.update();
+				renderer.render( scene, camera );
+			}
+			
+			function changeColor() 
+			{
+				clearScene();
+				// Kanoume ola ta exartimata gri
+				colors =
+				{
+					pci: 0x0d0d0d,
+					capacitor: 0x0d0d0d,
+					sata: 0x0d0d0d,
+					southbridge: 0x0d0d0d,
+					battery: 0x0d0d0d,
+					ram1: 0x0d0d0d,
+					ram2: 0x0d0d0d,
+					chip: 0x0d0d0d,
+					inductor: 0x0d0d0d,
+					cooler: 0x0d0d0d,
+					power: 0x0d0d0d,
+					cpu: 0x0d0d0d,
+					ports: 0x0d0d0d
+				};
+			}
+			
+			function updateModel()
+			{
+				// Dimiourgoume ta modela				
+				// PCI Slot		
+				PCI(scene,colors.pci,-10,0.5,20);
+				PCI(scene,colors.pci,-10,0.5,16);
+				PCI(scene,colors.pci,-10,0.5,12);
+				
+				//Capacitor
+				Capacitor(scene,colors.capacitor,8,2,20);
+				Capacitor(scene,colors.capacitor,8,2,16);
+				Capacitor(scene,colors.capacitor,8,2,12);
+				Capacitor(scene,colors.capacitor,8,2,8);
+				
+				// SATA	
+				SATA(scene,colors.sata,30,0.5,20);
+				SATA(scene,colors.sata,30,0.5,16);
+				SATA(scene,colors.sata,30,0.5,12);
+				SATA(scene,colors.sata,30,0.5,8);
+				
+				// SouthBridge
+				SouthBridge(scene,colors.southbridge,19,0.5,17);
+				
+				// Battery
+				Battery(scene,colors.battery,19,0.5,7);
+				
+				// RAM						
+				RAM(scene,colors.ram1,25,0.5,-12,false);
+                RAM(scene,colors.ram2,20,0.5,-12,false);
+                RAM(scene,colors.ram1,15,0.5,-12,true);
+                RAM(scene,colors.ram2,10,0.5,-12,true);
+				
+				// Chip
+				Chip(scene,colors.chip,-28,0.5,20);
+				Chip(scene,colors.chip,-28,0.5,16);
+				Chip(scene,colors.chip,-28,0.5,12);
+				
+				// Inductor (Coil)
+				Inductor(scene,colors.inductor,-32,0.5,20);
+				Inductor(scene,colors.inductor,-32,0.5,15);
+				
+				// Cooler
+				Cooler(scene,colors.cooler,-5,0.5,4);
+				
+				// Power		
+				Power(scene,colors.power,30,0.5,-12);
+				
+				// CPU
+				CPU(scene,colors.cpu,-3,0.5,-12,fanLight);
+				
+				// Ports		
+				Ports(scene,colors.ports,-30,0.5,-8,ethrnetLight);
+			}
+
+			function resetModel()
+			{
+				clearScene();
+				colors =
+				{
+					pci: 0xe6e6e6,
+					capacitor: 0x001033,
+					sata: 0xff0000,
+					southbridge: 0x003300,
+					battery: 0x808080,
+					ram1: 0xffff00,
+					ram2: 0x0000ff,
+					chip: 0x000000,
+					inductor: 0x666633,
+					cooler: 0x0066ff,
+					power: 0xbfbfbf,
+					cpu: 0x996633,
+					ports: 0xbfbfbf
+				};
+				updateModel();
+			}
+
+			function clearScene()
+			{
+				// Katharismos tis skinis kai epanadimiourgia
+				for( var i = camera.children.length - 1; i >= 0; i--)
+				{
+					obj = camera.children[i];
+					camera.remove(obj);
+				}
+				for( var i = scene.children.length - 1; i >= 0; i--)
+				{
+					obj = scene.children[i];
+					scene.remove(obj);
+				}
+				for( var i = container.children.length - 1; i >= 0; i--)
+				{
+					obj = container.children[i];
+					container.remove(obj);
+				}
+				gui.destroy();		
+				init();
+			}
+			
+			function init() 
+			{
+				container = document.createElement( 'div' );
+				document.body.appendChild( container );
+				
+				// Scene
+				scene = new THREE.Scene();
+				// Fog: color, near, far
+				scene.fog = new THREE.Fog( 0xcce0ff, 10, 500 );
+				
+				// Camera
+				var SCREEN_WIDTH = window.innerWidth; 
+				var SCREEN_HEIGHT = window.innerHeight;
+				var VIEW_ANGLE = 75; 
+				var ASPECT = SCREEN_WIDTH / SCREEN_HEIGHT; 
+				var NEAR = 1;
+				var FAR = 20000;
+				camera = new THREE.PerspectiveCamera( VIEW_ANGLE, ASPECT, NEAR, FAR);
+				scene.add(camera);
+				camera.position.set(0,50,50);
+				camera.lookAt(scene.position);
+				
+				// Renderer
+				// Elegxos gia webgl alliws Canvas 2D API
+				if ( Detector.webgl )
+					renderer = new THREE.WebGLRenderer( {antialias:true} );
+				else
+					renderer = new THREE.CanvasRenderer();
+				renderer.setSize( window.innerWidth, window.innerHeight );	
+				renderer.setPixelRatio( window.devicePixelRatio );
+				renderer.setClearColor( scene.fog.color );
+				container.appendChild( renderer.domElement );
+				renderer.gammaInput = true;
+				renderer.gammaOutput = true;
+				renderer.shadowMap.enabled = true;
+				
+				// Events
+				window.addEventListener( 'resize', onWindowResize, false );
+				
+				// Controls
+				controls = new THREE.OrbitControls( camera, renderer.domElement );
+				
+				// Stats
+				stats = new Stats();
+				//topothetisi twn Stats panta panw aristera
+				stats.domElement.style.position = 'absolute';
+				stats.domElement.style.top = '0px';
+				container.appendChild( stats.domElement );
+	
+				// Lights
+				var light, materials;
+				scene.add( new THREE.AmbientLight( 0x666666 ) );
+				//galano fws, entasi fwtos
+				light = new THREE.DirectionalLight( 0xdfebff, 1.75 );
+				light.position.set( 0, 200, 0 );
+				//pollaplasiasmos tou dianismatos
+				light.position.multiplyScalar( 1.3 );
+				scene.add( light );
+
+				// Ground
+				var loader = new THREE.TextureLoader();	
+				loader.crossOrigin = '';
+				var floorTexture = loader.load( './textures/pc.jpg');
+				floorTexture.wrapS = floorTexture.wrapT = THREE.RepeatWrapping; 
+				// Se poses seires kai stiles tha emfanizetai i eikona
+				floorTexture.repeat.set( 1, 1 );
+				var floorMaterial = new THREE.MeshBasicMaterial( { map: floorTexture, side: THREE.DoubleSide } );
+				// Kukliko patwma
+				var floorGeometry = new THREE.CircleGeometry(80, 100);				
+				var floor = new THREE.Mesh(floorGeometry, floorMaterial);
+				floor.position.y = -10;
+				floor.rotation.x = - Math.PI / 2;
+				scene.add(floor);
+				
+				// Mobo Base				
+				var moboTexture = loader.load( './textures/board.jpg');	
+				var geometry = new THREE.BoxGeometry( 70, 0.5, 50 );
+				var material = new THREE.MeshBasicMaterial( { color: 0x134e1a, map: moboTexture } );
+				var mobo = new THREE.Mesh( geometry, material );
+				scene.add( mobo );
+				
+				document.getElementById('compName').innerHTML = 'Motherboard';
+				document.getElementById('compInfoPage').setAttribute('data', 'https://en.wikipedia.org/wiki/Motherboard');				 
+				// Build GUI
+				gui = new dat.GUI();
+				
+				// Create parameters and what they do
+				parameters = 
+				{
+					PCI: function() { 
+						changeColor();
+						colors.pci = 0xe6e6e6;
+						updateModel();
+						document.getElementById('compName').innerHTML = 'PCI';
+						document.getElementById('compInfoPage').setAttribute('data', ''); },
+					Capacitor: function() { 
+						changeColor();
+						colors.capacitor = 0x001033;
+						updateModel();
+						document.getElementById('compName').innerHTML = 'Capacitor';
+						document.getElementById('compInfoPage').setAttribute('data', ''); },
+					SATA: function() { 
+						changeColor();
+						colors.sata = 0xff0000;
+						updateModel();
+						document.getElementById('compName').innerHTML = 'SATA';
+						document.getElementById('compInfoPage').setAttribute('data', ''); },
+					SouthBridge: function() { 
+						changeColor();
+						colors.southbridge = 0x003300;
+						updateModel();
+						document.getElementById('compName').innerHTML = 'SouthBridge';
+						document.getElementById('compInfoPage').setAttribute('data', ''); },
+					Battery: function() { 
+						changeColor();
+						colors.battery = 0x808080;
+						updateModel();
+						document.getElementById('compName').innerHTML = 'Battery';
+						document.getElementById('compInfoPage').setAttribute('data', ''); },
+					RAM: function() { 
+						changeColor();
+						colors.ram1 = 0xffff00;
+						colors.ram2 = 0x0000ff;
+						updateModel();
+						document.getElementById('compName').innerHTML = 'RAM';
+						document.getElementById('compInfoPage').setAttribute('data', ''); },
+					Chip: function() { 
+						changeColor();
+						colors.chip = 0x000000;
+						updateModel();
+						document.getElementById('compName').innerHTML = 'Chip';
+						document.getElementById('compInfoPage').setAttribute('data', ''); },
+					Inductor: function() { 
+						changeColor();
+						colors.inductor = 0x666633;
+						updateModel();
+						document.getElementById('compName').innerHTML = 'Inductor';
+						document.getElementById('compInfoPage').setAttribute('data', ''); },
+					Cooler: function() { 
+						changeColor();
+						colors.cooler = 0x0066ff;
+						updateModel();
+						document.getElementById('compName').innerHTML = 'Cooler';
+						document.getElementById('compInfoPage').setAttribute('data', ''); },
+					Power: function() { 
+						changeColor();
+						colors.power = 0xbfbfbf;
+						updateModel();
+						document.getElementById('compName').innerHTML = 'Power';
+						document.getElementById('compInfoPage').setAttribute('data', ''); },
+					CPU: function() { 
+						changeColor();
+						colors.cpu = 0x996633;
+						updateModel();
+						document.getElementById('compName').innerHTML = 'CPU';
+						document.getElementById('compInfoPage').setAttribute('data', ''); },							
+					Ports: function() { 
+						changeColor();
+						colors.ports = 0xbfbfbf;
+						updateModel();
+						document.getElementById('compName').innerHTML = 'Ports';
+						document.getElementById('compInfoPage').setAttribute('data', ''); },
+					CPULight: function() { colortmp=colors;changeColor();colors=colortmp;fanLight=!fanLight;updateModel(); },
+					EthernetLight: function() { colortmp=colors;changeColor();colors=colortmp;ethrnetLight=!ethrnetLight;updateModel(); },
+					reset: function() { resetModel() },
+				}	
+				// Menu buttons, listeners
+				var guiComponents = gui.addFolder('Components');
+				guiComponents.add( parameters, 'PCI' ).name('PCI').listen();		
+				guiComponents.add( parameters, 'Capacitor' ).name('Capacitor').listen();
+				guiComponents.add( parameters, 'SATA' ).name('SATA').listen();				
+				guiComponents.add( parameters, 'SouthBridge' ).name('SouthBridge').listen();
+				guiComponents.add( parameters, 'Battery' ).name('Battery').listen();
+				guiComponents.add( parameters, 'RAM' ).name('RAM').listen();
+				guiComponents.add( parameters, 'Chip' ).name('Chip').listen();
+				guiComponents.add( parameters, 'Inductor' ).name('Inductor').listen();
+				guiComponents.add( parameters, 'Cooler' ).name('Cooler').listen();
+				guiComponents.add( parameters, 'Power' ).name('Power').listen();
+				guiComponents.add( parameters, 'CPU' ).name('CPU').listen();
+				guiComponents.add( parameters, 'CPULight' ).name('Toggle CPU Light').listen();
+				guiComponents.add( parameters, 'Ports' ).name('Ports').listen();
+				guiComponents.add( parameters, 'reset' ).name("Reset Model");
+				guiComponents.open();
+				var guiLights = gui.addFolder('Lights');
+				guiLights.add( parameters, 'CPULight' ).name('Toggle CPU').listen();
+				guiLights.add( parameters, 'EthernetLight' ).name('Toggle Ethernet').listen();
+				guiLights.open();
+				gui.open();
+			}
+
+			//////////
+			// MAIN //
+			//////////
+			
+			// Error check
+			if ( ! Detector.webgl ) 
+			{
+				Detector.addGetWebGLMessage();
+				document.getElementById( 'container' ).innerHTML = "";
+			}
+
+			// Custom global variables
+			var container, scene, camera, renderer;
+			var controls, stats;
+			var colors, colortmp, gui, parameters;
+			var compName, compInfoPage;
+			var spinFan, fanLight=false, ethrnetLight=false;	
+			
+			init();
+			resetModel();
+			render();
+		</script>
+</body>
+</html>
