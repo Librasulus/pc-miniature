@@ -359,6 +359,7 @@
 						document.getElementById('compInfoPage').setAttribute('data', ''); },
 					CPULight: function() { colortmp=colors;changeColor();colors=colortmp;fanLight=!fanLight;updateModel(); },
 					EthernetLight: function() { colortmp=colors;changeColor();colors=colortmp;ethrnetLight=!ethrnetLight;updateModel(); },
+					Test1: function() { changeColor();},
 					reset: function() { resetModel() },
 				}	
 				// Menu buttons, listeners
@@ -382,7 +383,12 @@
 				guiLights.add( parameters, 'CPULight' ).name('Toggle CPU').listen();
 				guiLights.add( parameters, 'EthernetLight' ).name('Toggle Ethernet').listen();
 				guiLights.open();
+				var guiTests = gui.addFolder('Tests');
+				guiTests.add( parameters, 'Test1' ).name('1st test').listen();
+				guiTests.open();
 				gui.open();
+				
+				
 			}
 
 			//////////
