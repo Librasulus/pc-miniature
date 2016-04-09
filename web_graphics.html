@@ -21,11 +21,11 @@
 		
 		#compinfo {			
 			position:fixed;
-			width:25%;
-			height:25%;
-			background:#cce0ff;
+			width:420px;
+			height:230px;
+			background:#ccffcc;
 			left:10px;
-			top:69%;
+			top:70%;
 			text-align: center;
 		}
 
@@ -57,7 +57,90 @@
 		<tr><td><object id="compInfoPage" type="text/html" data=""></object></td></tr>
 	</table>
 </div>
-		<script>	
+		<script>
+/*
+myObject.name = "objectName";
+var object = scene.getObjectByName( "objectName" );
+or to recursively search the scene graph
+
+var object = scene.getObjectByName( "objectName", true );
+*/		
+var raycaster = new THREE.Raycaster();
+var mouse = new THREE.Vector2();
+var clicked=false;	
+
+			function onMouseClick( event ) 
+			{
+				event.preventDefault();
+				mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
+				mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;	
+				
+				//catch the click
+raycaster.setFromCamera( mouse, camera );
+var intersects = raycaster.intersectObjects( objects, recursiveFlag );
+//listObjectMesh is the list of mesh object which are displayed
+//var intersectsObject = ray.intersectObjects(listObjectMesh);       
+
+if ( intersects.length > 0 ) {
+    SELECTED = intersects[0].object;
+    // the position is calculated relatively to the intersection with a plane
+    //var intersectsPlane = ray.intersectObject(scope.plane);
+    //initialPosition.copy( intersectsPlane[0].point);
+};
+
+				
+				//var object = scene.getObjectByName( 'PCI' );
+				changeColor();
+				switch(object.name) 
+				{
+					case 'PCI':
+						colors.pci = 0xe6e6e6;
+						break;					
+					case 'Capacitor':
+						colors.capacitor = 0x001033;
+						break;
+					case 'Sata':
+						colors.sata = 0xff0000;
+						break;
+					case 'Southbridge':
+						colors.southbridge = 0x003300;
+						break;
+					case 'Battery':
+						colors.battery = 0x808080;
+						break;
+					case 'RAM':
+						colors.ram1 = 0xffff00;
+						colors.ram2 = 0x0000ff;
+						break;
+					case 'Chip':
+						colors.chip = 0x000000;
+						break;
+					case 'Inductor':
+						colors.inductor = 0x666633;
+						break;
+					case 'Cooler':
+						colors.cooler = 0x0066ff;
+						break;
+					case 'Power':
+						colors.power = 0xbfbfbf;
+						break;
+					case 'CPU':
+						colors.cpu = 0x996633;
+						break;
+					case 'Ports':
+						colors.ports = 0xbfbfbf;
+						break;
+					case 'Pins':
+						colors.pins = 0xbfbfbf;
+						break;
+					default:
+						resetModel();
+				}
+				updateModel();
+				clicked = true;
+
+			}
+
 			function onWindowResize() 
 			{
 				//stin allagi megethous parathurou dimiourgei ksana tin eikona
@@ -69,108 +152,10 @@
 			function render() 
 			{
 				requestAnimationFrame( render );
-				spinFan.rotation.y -= 0.05;
+				spinFan.rotation.y -= 0.05;	
 				controls.update();
 				stats.update();
 				renderer.render( scene, camera );
-			}
-			
-			function changeColor() 
-			{
-				clearScene();
-				// Kanoume ola ta exartimata gri
-				colors =
-				{
-					pci: 0x0d0d0d,
-					capacitor: 0x0d0d0d,
-					sata: 0x0d0d0d,
-					southbridge: 0x0d0d0d,
-					battery: 0x0d0d0d,
-					ram1: 0x0d0d0d,
-					ram2: 0x0d0d0d,
-					chip: 0x0d0d0d,
-					inductor: 0x0d0d0d,
-					cooler: 0x0d0d0d,
-					power: 0x0d0d0d,
-					cpu: 0x0d0d0d,
-					ports: 0x0d0d0d
-				};
-			}
-			
-			function updateModel()
-			{
-				// Dimiourgoume ta modela				
-				// PCI Slot		
-				PCI(scene,colors.pci,-10,0.5,20);
-				PCI(scene,colors.pci,-10,0.5,16);
-				PCI(scene,colors.pci,-10,0.5,12);
-				
-				//Capacitor
-				Capacitor(scene,colors.capacitor,8,2,20);
-				Capacitor(scene,colors.capacitor,8,2,16);
-				Capacitor(scene,colors.capacitor,8,2,12);
-				Capacitor(scene,colors.capacitor,8,2,8);
-				
-				// SATA	
-				SATA(scene,colors.sata,30,0.5,20);
-				SATA(scene,colors.sata,30,0.5,16);
-				SATA(scene,colors.sata,30,0.5,12);
-				SATA(scene,colors.sata,30,0.5,8);
-				
-				// SouthBridge
-				SouthBridge(scene,colors.southbridge,19,0.5,17);
-				
-				// Battery
-				Battery(scene,colors.battery,19,0.5,7);
-				
-				// RAM						
-				RAM(scene,colors.ram1,25,0.5,-12,false);
-                RAM(scene,colors.ram2,20,0.5,-12,false);
-                RAM(scene,colors.ram1,15,0.5,-12,true);
-                RAM(scene,colors.ram2,10,0.5,-12,true);
-				
-				// Chip
-				Chip(scene,colors.chip,-28,0.5,20);
-				Chip(scene,colors.chip,-28,0.5,16);
-				Chip(scene,colors.chip,-28,0.5,12);
-				
-				// Inductor (Coil)
-				Inductor(scene,colors.inductor,-32,0.5,20);
-				Inductor(scene,colors.inductor,-32,0.5,15);
-				
-				// Cooler
-				Cooler(scene,colors.cooler,-5,0.5,4);
-				
-				// Power		
-				Power(scene,colors.power,30,0.5,-12);
-				
-				// CPU
-				CPU(scene,colors.cpu,-3,0.5,-12,fanLight);
-				
-				// Ports		
-				Ports(scene,colors.ports,-30,0.5,-8,ethrnetLight);
-			}
-
-			function resetModel()
-			{
-				clearScene();
-				colors =
-				{
-					pci: 0xe6e6e6,
-					capacitor: 0x001033,
-					sata: 0xff0000,
-					southbridge: 0x003300,
-					battery: 0x808080,
-					ram1: 0xffff00,
-					ram2: 0x0000ff,
-					chip: 0x000000,
-					inductor: 0x666633,
-					cooler: 0x0066ff,
-					power: 0xbfbfbf,
-					cpu: 0x996633,
-					ports: 0xbfbfbf
-				};
-				updateModel();
 			}
 
 			function clearScene()
@@ -277,7 +262,7 @@
 				scene.add( mobo );
 				
 				document.getElementById('compName').innerHTML = 'Motherboard';
-				document.getElementById('compInfoPage').setAttribute('data', 'https://en.wikipedia.org/wiki/Motherboard');				 
+				document.getElementById('compInfoPage').setAttribute('data', './html/Motherboard.html');				 
 				// Build GUI
 				gui = new dat.GUI();
 				
@@ -289,77 +274,82 @@
 						colors.pci = 0xe6e6e6;
 						updateModel();
 						document.getElementById('compName').innerHTML = 'PCI';
-						document.getElementById('compInfoPage').setAttribute('data', ''); },
+						document.getElementById('compInfoPage').setAttribute('data', './html/PCI.html'); },
 					Capacitor: function() { 
 						changeColor();
 						colors.capacitor = 0x001033;
 						updateModel();
 						document.getElementById('compName').innerHTML = 'Capacitor';
-						document.getElementById('compInfoPage').setAttribute('data', ''); },
+						document.getElementById('compInfoPage').setAttribute('data', './html/Capacitor.html'); },
 					SATA: function() { 
 						changeColor();
 						colors.sata = 0xff0000;
 						updateModel();
 						document.getElementById('compName').innerHTML = 'SATA';
-						document.getElementById('compInfoPage').setAttribute('data', ''); },
+						document.getElementById('compInfoPage').setAttribute('data', './html/SATA.html'); },
 					SouthBridge: function() { 
 						changeColor();
 						colors.southbridge = 0x003300;
 						updateModel();
 						document.getElementById('compName').innerHTML = 'SouthBridge';
-						document.getElementById('compInfoPage').setAttribute('data', ''); },
+						document.getElementById('compInfoPage').setAttribute('data', './html/SouthBridge.html'); },
 					Battery: function() { 
 						changeColor();
 						colors.battery = 0x808080;
 						updateModel();
 						document.getElementById('compName').innerHTML = 'Battery';
-						document.getElementById('compInfoPage').setAttribute('data', ''); },
+						document.getElementById('compInfoPage').setAttribute('data', './html/Battery.html'); },
 					RAM: function() { 
 						changeColor();
 						colors.ram1 = 0xffff00;
 						colors.ram2 = 0x0000ff;
 						updateModel();
 						document.getElementById('compName').innerHTML = 'RAM';
-						document.getElementById('compInfoPage').setAttribute('data', ''); },
+						document.getElementById('compInfoPage').setAttribute('data', './html/RAM.html'); },
 					Chip: function() { 
 						changeColor();
 						colors.chip = 0x000000;
 						updateModel();
 						document.getElementById('compName').innerHTML = 'Chip';
-						document.getElementById('compInfoPage').setAttribute('data', ''); },
+						document.getElementById('compInfoPage').setAttribute('data', './html/Chip.html'); },
 					Inductor: function() { 
 						changeColor();
 						colors.inductor = 0x666633;
 						updateModel();
 						document.getElementById('compName').innerHTML = 'Inductor';
-						document.getElementById('compInfoPage').setAttribute('data', ''); },
+						document.getElementById('compInfoPage').setAttribute('data', './html/Inductor.html'); },
 					Cooler: function() { 
 						changeColor();
 						colors.cooler = 0x0066ff;
 						updateModel();
 						document.getElementById('compName').innerHTML = 'Cooler';
-						document.getElementById('compInfoPage').setAttribute('data', ''); },
+						document.getElementById('compInfoPage').setAttribute('data', './html/Cooler.html'); },
 					Power: function() { 
 						changeColor();
 						colors.power = 0xbfbfbf;
 						updateModel();
 						document.getElementById('compName').innerHTML = 'Power';
-						document.getElementById('compInfoPage').setAttribute('data', ''); },
+						document.getElementById('compInfoPage').setAttribute('data', './html/Power.html'); },
 					CPU: function() { 
 						changeColor();
 						colors.cpu = 0x996633;
 						updateModel();
 						document.getElementById('compName').innerHTML = 'CPU';
-						document.getElementById('compInfoPage').setAttribute('data', ''); },							
+						document.getElementById('compInfoPage').setAttribute('data', './html/CPU.html'); },							
 					Ports: function() { 
 						changeColor();
 						colors.ports = 0xbfbfbf;
 						updateModel();
 						document.getElementById('compName').innerHTML = 'Ports';
-						document.getElementById('compInfoPage').setAttribute('data', ''); },
+						document.getElementById('compInfoPage').setAttribute('data', './html/ports.html'); },
+					Pins: function() { 
+						changeColor();
+						colors.pins = 0xbfbfbf;
+						updateModel();
+						document.getElementById('compName').innerHTML = 'Pins';
+						document.getElementById('compInfoPage').setAttribute('data', './html/pins.html'); },
 					CPULight: function() { colortmp=colors;changeColor();colors=colortmp;fanLight=!fanLight;updateModel(); },
 					EthernetLight: function() { colortmp=colors;changeColor();colors=colortmp;ethrnetLight=!ethrnetLight;updateModel(); },
-					Test1: function() { changeColor();},
 					reset: function() { resetModel() },
 				}	
 				// Menu buttons, listeners
@@ -375,21 +365,124 @@
 				guiComponents.add( parameters, 'Cooler' ).name('Cooler').listen();
 				guiComponents.add( parameters, 'Power' ).name('Power').listen();
 				guiComponents.add( parameters, 'CPU' ).name('CPU').listen();
-				guiComponents.add( parameters, 'CPULight' ).name('Toggle CPU Light').listen();
 				guiComponents.add( parameters, 'Ports' ).name('Ports').listen();
+				guiComponents.add( parameters, 'Pins' ).name('Pins').listen();
 				guiComponents.add( parameters, 'reset' ).name("Reset Model");
 				guiComponents.open();
 				var guiLights = gui.addFolder('Lights');
 				guiLights.add( parameters, 'CPULight' ).name('Toggle CPU').listen();
 				guiLights.add( parameters, 'EthernetLight' ).name('Toggle Ethernet').listen();
 				guiLights.open();
-				var guiTests = gui.addFolder('Tests');
-				guiTests.add( parameters, 'Test1' ).name('1st test').listen();
-				guiTests.open();
 				gui.open();
 				
-				
+				//				
+window.addEventListener( 'click', onMouseClick, false );
+			}			
+			
+			function changeColor() 
+			{
+				clearScene();
+				// Kanoume ola ta exartimata gri
+				colors =
+				{
+					pci: 0x0d0d0d,
+					capacitor: 0x0d0d0d,
+					sata: 0x0d0d0d,
+					southbridge: 0x0d0d0d,
+					battery: 0x0d0d0d,
+					ram1: 0x0d0d0d,
+					ram2: 0x0d0d0d,
+					chip: 0x0d0d0d,
+					inductor: 0x0d0d0d,
+					cooler: 0x0d0d0d,
+					power: 0x0d0d0d,
+					cpu: 0x0d0d0d,
+					ports: 0x0d0d0d,
+					pins: 0x0d0d0d
+				};
 			}
+			
+			function updateModel()
+			{
+				// Dimiourgoume ta modela				
+				// PCI Slot		
+				PCI(scene,colors.pci,-10,0.5,20);
+				PCI(scene,colors.pci,-10,0.5,16);
+				PCI(scene,colors.pci,-10,0.5,12);
+				
+				//Capacitor
+				Capacitor(scene,colors.capacitor,8,2,20);
+				Capacitor(scene,colors.capacitor,8,2,16);
+				Capacitor(scene,colors.capacitor,8,2,12);
+				Capacitor(scene,colors.capacitor,8,2,8);
+				
+				// SATA	
+				SATA(scene,colors.sata,30,0.5,20);
+				SATA(scene,colors.sata,30,0.5,16);
+				SATA(scene,colors.sata,30,0.5,12);
+				SATA(scene,colors.sata,30,0.5,8);
+				
+				// SouthBridge
+				SouthBridge(scene,colors.southbridge,19,0.5,17);
+				
+				// Battery
+				Battery(scene,colors.battery,19,0.5,7);
+				
+				// RAM						
+				RAM(scene,colors.ram1,25,0.5,-12,false);
+                RAM(scene,colors.ram2,20,0.5,-12,false);
+                RAM(scene,colors.ram1,15,0.5,-12,true);
+                RAM(scene,colors.ram2,10,0.5,-12,true);
+				
+				// Chip
+				Chip(scene,colors.chip,-28,0.5,20);
+				Chip(scene,colors.chip,-28,0.5,16);
+				Chip(scene,colors.chip,-28,0.5,12);
+				
+				// Inductor (Coil)
+				Inductor(scene,colors.inductor,-32,0.5,20);
+				Inductor(scene,colors.inductor,-32,0.5,15);
+				
+				// Cooler
+				Cooler(scene,colors.cooler,-5,0.5,4);
+				
+				// Power		
+				Power(scene,colors.power,30,0.5,-12);
+				
+				// CPU
+				CPU(scene,colors.cpu,-3,0.5,-12,fanLight);
+				
+				// Ports		
+				Ports(scene,colors.ports,-32,0.5,-8,ethrnetLight);
+				
+				//Pins
+				PINS(scene,colors.pins,29.3,0.2,15);
+				PINS(scene,colors.pins,29.3,0.2,9);
+			}
+
+			function resetModel()
+			{
+				clearScene();
+				colors =
+				{
+					pci: 0xe6e6e6,
+					capacitor: 0x001033,
+					sata: 0xff0000,
+					southbridge: 0x003300,
+					battery: 0x808080,
+					ram1: 0xffff00,
+					ram2: 0x0000ff,
+					chip: 0x000000,
+					inductor: 0x666633,
+					cooler: 0x0066ff,
+					power: 0xbfbfbf,
+					cpu: 0x996633,
+					ports: 0xbfbfbf,
+					pins: 0xbfbfbf
+				};
+				updateModel();
+			}
+
 
 			//////////
 			// MAIN //

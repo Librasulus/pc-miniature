@@ -5,6 +5,7 @@
 // PCI Slot
 function PCI(scene,color,xx,yy,zz)
 {
+	var group = new THREE.Object3D();
 	var black10;	
 	if (color == 0x0d0d0d)
 		black10 = color;
@@ -24,7 +25,8 @@ function PCI(scene,color,xx,yy,zz)
 		pci.position.set(xx + pos[i][0], yy + pos[i][1], zz + pos[i][2]);
 		pci.receiveShadow = true;
 		pci.castShadow = true;
-		scene.add( pci );
+		//scene.add( pci );
+		group.add( pci );
 	}
 	//dontakia
     for (i = 0; i < 61; i++)
@@ -38,8 +40,11 @@ function PCI(scene,color,xx,yy,zz)
 		//summetrika dontakia
         pci = pci.clone();
         pci.position.set(xx+i*0.45-13.5, yy+1.5,zz-1);
-        scene.add( pci );
+        //scene.add( pci );
+		group.add( pci );
     }
+	group.name = 'PCI';
+	scene.add( group );
 	geometry.dispose();
 	material.dispose();
 }
@@ -516,11 +521,11 @@ function Ports(scene,color,xx,yy,zz,ethrnetLight)
 	var stdUSBboxWidth=0.6;		
 	
 	var gray50,black,blue50,red50;
-	var gold,lampakia,lampakiaLight,soundcolor;	
+	var gold,lampakia,lampakiaLight,soundcolor,hdmicolor;	
 	lampakiaLight = [0x00FF00, 0xFFD700];
 	if (color == 0x0d0d0d)
 	{
-		gray50 = black = blue50 = red50 = gold = black = color;
+		gray50 = black = blue50 = red50 = gold = black = hdmicolor = color;
 		soundcolor = [ color, color, color , color, color, color ];
 		lampakia = [color, color];
 	}
@@ -531,6 +536,7 @@ function Ports(scene,color,xx,yy,zz,ethrnetLight)
 		blue50=0x0066ff;
 		red50=0xFF0000;
 		gold = 0xFFD700;
+		hdmicolor = 0x2C3539;
 		lampakia = [0x00FF00, 0xFFD700];		
 		soundcolor = [ 0xC0C0C0, 0xFFC0DB, 0x654321 , 0xBFFF00, 0x00FFFF, 0x9370DB ];
 	}
@@ -540,6 +546,7 @@ function Ports(scene,color,xx,yy,zz,ethrnetLight)
 	// INNER Funcctions //
 	//////////////////////
 	
+	// USB
 	function createUSBport(scene,xx,yy,zz,color,blue50,black,usbBoxZdisplacement,usbalignment,portNo)
 	{
 		var colortmp = [color, blue50, black];
@@ -560,6 +567,38 @@ function Ports(scene,color,xx,yy,zz,ethrnetLight)
 		}
 	}
 
+	// HDMI
+	function HDMI(scene,xx,yy,zz,color,black)
+	{
+		var dimensions=[[0.1,1.7,3],[0.1,1,2.7],[3,0.1,3.1],[3,0.1,2.4],[2.6,0.1,2.9],
+						[2.6,0.1,2.2],[3,0.1,2.5],[3,0.8,0.1],[3,0.8,0.1],[3,0.8,0.1],
+						[3,0.8,0.1],[3,0.5,0.1],[2.8,0.4,0.1],[3,0.5,0.1],[2.8,0.5,0.1]];
+		var displacements=[[1.4,0.2,-10],[1.3,0.5,-10],[0,1,-10],[0,-0.2,-10],[-0.2,0.8,-10],
+							[-0.2,0,-10],[0,0.6,-10],[0,0.6,-11.5],[0,0.6,-8.5],[0,0.6,-11.4],
+							[0,0.6,-8.6],[0,0,-11.4],[0,0,-11.3],[0,0,-8.7],[0,0,-8.8]];
+		var colors=[[gray50,gray50],[black,black],[gray50,gray50],[gray50,gray50],[black,black],
+					[black,black],[hdmicolor,hdmicolor],[gray50,gray50],[gray50,gray50],
+					[black,black],[black,black],[gray50,gray50],[black,black],[gray50,gray50],
+					[black,black]];
+		var componentswithrotations=[11,12,13,14];
+		var rotations=[-Math.PI/6,-Math.PI/6,Math.PI/5,Math.PI/5];
+		var components=15;
+		for(var i=0;i<components;i++)
+		{
+			var geometry = new THREE.BoxGeometry( dimensions[i][0], dimensions[i][1], dimensions[i][2] );
+			var material = new THREE.MeshPhongMaterial( { color: colors[i][0], specular: colors[i][1] } );
+			var hdmi = new THREE.Mesh( geometry, material );
+			hdmi.position.set(xx+displacements[i][0],yy+displacements[i][1],zz+displacements[i][2]);
+			var rotationindex=componentswithrotations.indexOf(i);
+			if(rotationindex!=-1)
+				hdmi.rotation.x = rotations[rotationindex];
+			hdmi.receiveShadow = true;
+			hdmi.castShadow = true;
+			scene.add( hdmi );
+		}
+	}
+	
+	// Ethernet
 	function ethernet(scene,xx,yy,zz,usbBoxZdisp,color,black)
 	{
 		var colortmp = [black, color, color, color, color, color, color, color];
@@ -615,7 +654,8 @@ function Ports(scene,color,xx,yy,zz,ethrnetLight)
 			}
 		}
 	}
-	// this function creates big great boxes that contain stuff
+	
+	// Gray Boxes
 	function biggraybox(scene,xx,yy,zz,usbBoxZdisp,color,black)
 	{
 		var colortmp = [color, black, color, black, color, color, black];
@@ -709,15 +749,22 @@ function Ports(scene,color,xx,yy,zz,ethrnetLight)
 		createUSBport(scene,xx,yy,zz,color,blue50,black,usbBoxZdisp,alignment,portNo);
 	}
 	
-	// ==========================   ETHERNET BOX  ================================================================= 
+	// ================   HDMI PORT 1  ================   
+	HDMI(scene,xx-1.2,yy,zz+3.5,color,black);
+	
+	// ================   HDMI PORT 2  ================   
+	// because we are l33t
+	HDMI(scene,xx-1.2,yy,zz,color,black);
+	
+	// ================   ETHERNET BOX  ================ 
 	//gray50 right box edge that contains the usb ports
 	var usbBoxZdisp=-1.5;
 	biggraybox(scene,xx,yy,zz,usbBoxZdisp,color,black);
 	
-	// ==========================   ETHERNET PORT  =================================================================   
+	// ================   ETHERNET PORT  ================   
 	ethernet(scene,xx,yy,zz,usbBoxZdisp,color,black);
 
-	// ========================== RED  usb ports inside the ETHERNET BOX ============================ 
+	// ================ RED  usb ports inside the ETHERNET BOX ================ 
 	
 	var usbportNo = 2;
 	var alignment=-0.5;
@@ -730,3 +777,90 @@ function Ports(scene,color,xx,yy,zz,ethrnetLight)
 	material.dispose();
 }
 
+//PINS
+function PINS (scene,color,xx,yy,zz)
+{
+	var pinsnumber =10;
+	var red50, black, blue50, pinscolor, pinscolor2;	
+	if (color == 0x0d0d0d)
+	{
+		gray50 = blue50 = pinscolor = pinscolor2 = color;
+	}
+	else
+	{
+		gray50 = 0x808080;
+		blue50=0x0066ff;
+		pinscolor = 0xFFD700;
+		pinscolor2 = 0x2C3539;
+	}
+	//////////////////////
+	// INNER Funcctions //
+	//////////////////////
+	
+	// USB Pins
+	function usbconnectors(scene,color,blue50,pinscolor,xx,yy,zz)
+	{
+		var dimensions = [[1.5,0.2,2.5],[1.5,1,0.1 ],[1.5,1,0.1],[0.1,1,2.5],[0.1,1,0.8],[0.1,1,0.8]];
+		var displacements = [[5,0.2,8],[5,0.8,9.2],[5,0.8,6.7],[4.2,0.8,7.9],[5.8,0.8,8.8],[5.8,0.8,7.1]];
+		var colors = [[blue50,blue50],[blue50,blue50],[blue50,blue50],[blue50,blue50],[blue50,blue50],[blue50,blue50]];
+		var usbpinumber=6;
+		//base
+		for (i=0;i<usbpinumber;i++){
+			
+			var geometry = new THREE.BoxGeometry( dimensions[i][0],dimensions[i][1],dimensions[i][2] );
+			var material = new THREE.MeshPhongMaterial( { color: colors[i][0], specular: colors[i][1] } );
+			var pins = new THREE.Mesh( geometry, material );
+			pins.position.set(xx+displacements[i][0], yy+displacements[i][1], zz+displacements[i][2]);
+			pins.receiveShadow = true;
+			pins.castShadow = true;
+			scene.add( pins );
+				
+		}
+		//pins	
+		var pinsnumber =4;
+		var geometry = new THREE.BoxGeometry( 0.1, 1.5, 0.1 );
+		var material = new THREE.MeshPhongMaterial( { color: pinscolor, specular: pinscolor } );
+		for (i=0; i<pinsnumber; i++)
+		{		
+			for (pinsx=0; pinsx<2; pinsx++){
+				var pins = new THREE.Mesh( geometry, material );
+				pins.position.set(xx+4.7+0.5*pinsx,yy+0.5,zz+7.3+0.5*i);
+				pins.receiveShadow = true;
+				pins.castShadow = true;
+				scene.add( pins );
+			}
+		}	
+			
+	}
+	
+	//////////////////////////
+	// END INNER Funcctions //
+	//////////////////////////
+
+	//base
+	var geometry = new THREE.BoxGeometry( 1.5,1,5.3 );
+	var material = new THREE.MeshPhongMaterial( { color: gray50, specular: gray50 } );
+	var pins = new THREE.Mesh( geometry, material );
+	pins.position.set(xx+5, yy+0.5, zz);
+	pins.receiveShadow = true;
+	pins.castShadow = true;
+	scene.add( pins );
+	//pins	
+	
+	var geometry = new THREE.BoxGeometry( 0.1, 0.8, 0.1 );
+	var material = new THREE.MeshPhongMaterial( { color: pinscolor, specular: pinscolor } );
+	for (i=0; i<pinsnumber; i++)
+	{		
+		for (pinsx=0; pinsx<2; pinsx++){
+		  var pins = new THREE.Mesh( geometry, material );
+		  pins.position.set(xx+4.7+0.5*pinsx,yy+1.2,zz-2.1+0.5*i);
+		  pins.receiveShadow = true;
+		  pins.castShadow = true;
+		  scene.add( pins );
+		}
+	}	
+
+	// ================   USB PIN  ================
+		usbconnectors(scene,colors,blue50,pinscolor2,29.3,0.2,12);
+		usbconnectors(scene,colors,blue50,pinscolor2,29.3,0.2,15);	
+}
