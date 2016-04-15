@@ -49,6 +49,7 @@
 		<script src="./js/MyShapes.js"></script>
 		<script src='./js/DAT.GUI.min.js'></script>
 		<script src="./js/ThreeCSG.js"></script>
+		<script src="./js/EventsControls.js"></script>
  
  <div id="compinfo">
 	<h2>Component Information</h2>
@@ -57,90 +58,37 @@
 		<tr><td><object id="compInfoPage" type="text/html" data=""></object></td></tr>
 	</table>
 </div>
-		<script>
-/*
-myObject.name = "objectName";
-var object = scene.getObjectByName( "objectName" );
-or to recursively search the scene graph
-
-var object = scene.getObjectByName( "objectName", true );
-*/		
-var raycaster = new THREE.Raycaster();
-var mouse = new THREE.Vector2();
-var clicked=false;	
-
-			function onMouseClick( event ) 
+		<script>	
+			function onMouseOver( event ) 
 			{
 				event.preventDefault();
 				mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
 				mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;	
-				
+
+	
 				//catch the click
-raycaster.setFromCamera( mouse, camera );
-var intersects = raycaster.intersectObjects( objects, recursiveFlag );
-//listObjectMesh is the list of mesh object which are displayed
-//var intersectsObject = ray.intersectObjects(listObjectMesh);       
-
-if ( intersects.length > 0 ) {
-    SELECTED = intersects[0].object;
-    // the position is calculated relatively to the intersection with a plane
-    //var intersectsPlane = ray.intersectObject(scope.plane);
-    //initialPosition.copy( intersectsPlane[0].point);
-};
-
-				
-				//var object = scene.getObjectByName( 'PCI' );
-				changeColor();
-				switch(object.name) 
+				raycaster.setFromCamera( mouse, camera );
+				var intersects = raycaster.intersectObjects( scene.children,true );
+				if ( intersects.length > 0 ) 
 				{
-					case 'PCI':
-						colors.pci = 0xe6e6e6;
-						break;					
-					case 'Capacitor':
-						colors.capacitor = 0x001033;
-						break;
-					case 'Sata':
-						colors.sata = 0xff0000;
-						break;
-					case 'Southbridge':
-						colors.southbridge = 0x003300;
-						break;
-					case 'Battery':
-						colors.battery = 0x808080;
-						break;
-					case 'RAM':
-						colors.ram1 = 0xffff00;
-						colors.ram2 = 0x0000ff;
-						break;
-					case 'Chip':
-						colors.chip = 0x000000;
-						break;
-					case 'Inductor':
-						colors.inductor = 0x666633;
-						break;
-					case 'Cooler':
-						colors.cooler = 0x0066ff;
-						break;
-					case 'Power':
-						colors.power = 0xbfbfbf;
-						break;
-					case 'CPU':
-						colors.cpu = 0x996633;
-						break;
-					case 'Ports':
-						colors.ports = 0xbfbfbf;
-						break;
-					case 'Pins':
-						colors.pins = 0xbfbfbf;
-						break;
-					default:
-						resetModel();
+					if ( INTERSECTED != intersects[ 0 ].object ) 
+					{
+						if ( intersects[ 0 ].object.name != 'mobo'  && intersects[ 0 ].object.name != 'floor')
+						{
+							if ( INTERSECTED ) INTERSECTED.material.color.setHex( INTERSECTED.currentHex );
+							INTERSECTED = intersects[ 0 ].object;						
+							INTERSECTED.currentHex = INTERSECTED.material.color.getHex();
+							INTERSECTED.material.color.setHex( 0xff0000 );
+						}
+					}
+				} 
+				else 
+				{
+					if ( INTERSECTED ) INTERSECTED.material.color.setHex( INTERSECTED.currentHex );
+					INTERSECTED = null;
 				}
-				updateModel();
-				clicked = true;
-
 			}
-
+			
 			function onWindowResize() 
 			{
 				//stin allagi megethous parathurou dimiourgei ksana tin eikona
@@ -154,7 +102,7 @@ if ( intersects.length > 0 ) {
 				requestAnimationFrame( render );
 				spinFan.rotation.y -= 0.05;	
 				controls.update();
-				stats.update();
+				stats.update();		
 				renderer.render( scene, camera );
 			}
 
@@ -176,7 +124,7 @@ if ( intersects.length > 0 ) {
 					obj = container.children[i];
 					container.remove(obj);
 				}
-				gui.destroy();		
+				gui.destroy();
 				init();
 			}
 			
@@ -210,14 +158,16 @@ if ( intersects.length > 0 ) {
 					renderer = new THREE.CanvasRenderer();
 				renderer.setSize( window.innerWidth, window.innerHeight );	
 				renderer.setPixelRatio( window.devicePixelRatio );
-				renderer.setClearColor( scene.fog.color );
-				container.appendChild( renderer.domElement );
+				renderer.setClearColor( scene.fog.color );				
 				renderer.gammaInput = true;
 				renderer.gammaOutput = true;
 				renderer.shadowMap.enabled = true;
+				container.appendChild( renderer.domElement );
 				
 				// Events
 				window.addEventListener( 'resize', onWindowResize, false );
+				document.addEventListener( 'mousemove', onMouseOver, false );
+
 				
 				// Controls
 				controls = new THREE.OrbitControls( camera, renderer.domElement );
@@ -252,6 +202,7 @@ if ( intersects.length > 0 ) {
 				var floor = new THREE.Mesh(floorGeometry, floorMaterial);
 				floor.position.y = -10;
 				floor.rotation.x = - Math.PI / 2;
+				floor.name = 'floor';
 				scene.add(floor);
 				
 				// Mobo Base				
@@ -259,6 +210,7 @@ if ( intersects.length > 0 ) {
 				var geometry = new THREE.BoxGeometry( 70, 0.5, 50 );
 				var material = new THREE.MeshBasicMaterial( { color: 0x134e1a, map: moboTexture } );
 				var mobo = new THREE.Mesh( geometry, material );
+				mobo.name = 'mobo';
 				scene.add( mobo );
 				
 				document.getElementById('compName').innerHTML = 'Motherboard';
@@ -350,7 +302,7 @@ if ( intersects.length > 0 ) {
 						document.getElementById('compInfoPage').setAttribute('data', './html/pins.html'); },
 					CPULight: function() { colortmp=colors;changeColor();colors=colortmp;fanLight=!fanLight;updateModel(); },
 					EthernetLight: function() { colortmp=colors;changeColor();colors=colortmp;ethrnetLight=!ethrnetLight;updateModel(); },
-					reset: function() { resetModel() },
+					reset: function() { resetModel();updateModel(); },
 				}	
 				// Menu buttons, listeners
 				var guiComponents = gui.addFolder('Components');
@@ -374,9 +326,6 @@ if ( intersects.length > 0 ) {
 				guiLights.add( parameters, 'EthernetLight' ).name('Toggle Ethernet').listen();
 				guiLights.open();
 				gui.open();
-				
-				//				
-window.addEventListener( 'click', onMouseClick, false );
 			}			
 			
 			function changeColor() 
@@ -479,8 +428,7 @@ window.addEventListener( 'click', onMouseClick, false );
 					cpu: 0x996633,
 					ports: 0xbfbfbf,
 					pins: 0xbfbfbf
-				};
-				updateModel();
+				};				
 			}
 
 
@@ -502,8 +450,12 @@ window.addEventListener( 'click', onMouseClick, false );
 			var compName, compInfoPage;
 			var spinFan, fanLight=false, ethrnetLight=false;	
 			
+			var mouse = new THREE.Vector2();
+			var raycaster = new THREE.Raycaster(),INTERSECTED;
+			
 			init();
 			resetModel();
+			updateModel();
 			render();
 		</script>
 </body>

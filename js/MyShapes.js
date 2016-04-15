@@ -6,21 +6,15 @@
 function PCI(scene,color,xx,yy,zz)
 {
 	var group = new THREE.Object3D();
-	var black10;	
-	if (color == 0x0d0d0d)
-		black10 = color;
-	else
-		black10 = 0x1a1a1a;
-	color = [black10, color, color, color, color, color, color, color];
 	//basi, empros, endiameso1, endiameso2, piso, aristero, mesaio, deksi tmima
 	var pos = [[0,0,0],[0,1.5,1.5],[0,1.5,-0.5],[0,1.5,0.5],[0,1.5,-1.5],[-13.7,1.5,0],[8.5,1.5,0],[13.7,1.5,0]];
 	var width = [27.9, 28, 28, 28, 28, 0.7, 0.7, 0.7];
 	var height = [0.4, 4, 4, 4, 4, 4, 4, 4];
 	var depth =[2.9, 0.5, 0.4, 0.4, 0.5, 3.5, 3.5, 3.5];
+	var material = new THREE.MeshPhongMaterial( { color: color, specular: color } );
 	for (i = 0; i < 8; i++)
 	{
-		var geometry = new THREE.BoxGeometry( width[i], height[i], depth[i] );
-		var material = new THREE.MeshPhongMaterial( { color: color[i], specular: color[i] } );
+		var geometry = new THREE.BoxGeometry( width[i], height[i], depth[i] );		
 		var pci = new THREE.Mesh( geometry, material );
 		pci.position.set(xx + pos[i][0], yy + pos[i][1], zz + pos[i][2]);
 		pci.receiveShadow = true;
@@ -36,7 +30,8 @@ function PCI(scene,color,xx,yy,zz)
         pci.position.set(xx+i*0.45-13.5, yy+1.5,zz+1);
         pci.receiveShadow = true;
         pci.castShadow = true;
-        scene.add( pci );
+        //scene.add( pci );
+		group.add( pci );
 		//summetrika dontakia
         pci = pci.clone();
         pci.position.set(xx+i*0.45-13.5, yy+1.5,zz-1);
@@ -52,6 +47,7 @@ function PCI(scene,color,xx,yy,zz)
 // Capacitor
 function Capacitor(scene,color,xx,yy,zz)
 {
+	var group = new THREE.Object3D();
 	var black;
 	if (color == 0x0d0d0d)
 		black = color;
@@ -70,8 +66,11 @@ function Capacitor(scene,color,xx,yy,zz)
 		cylinder.position.set(xx, yy, zz);
 		cylinder.receiveShadow = true;
 		cylinder.castShadow = true;
-		scene.add( cylinder );
+		//scene.add( cylinder );
+		group.add( cylinder );
 	}
+	group.name = 'Capacitor';
+	scene.add( group );
 	geometry.dispose();
 	material.dispose();
 }
@@ -79,27 +78,25 @@ function Capacitor(scene,color,xx,yy,zz)
 // SATA
 function SATA(scene,color,xx,yy,zz)
 {
-	var red15;	
-	if (color == 0x0d0d0d)
-		red15 = color;
-	else
-		red15 = 0x4d0000;
-	color = [red15, color, color, color, color, color];
+	var group = new THREE.Object3D();
 	//basi, empros, piso, aristero, deksi eswteriko tmima
 	var pos = [[0,0,0],[0,0.5,1.25],[0,0.5,-1.25],[-0.7,0.5,0],[0.7,0.5,0],[0,0.5,0]];
 	var width = [1.5, 1.9, 1.9, 0.5, 0.5, 0.1];
 	var height = [0.4, 2, 2, 2, 2, 2];
 	var depth =[2.9, 0.5, 0.5, 3, 3, 1];
+	var material = new THREE.MeshPhongMaterial( { color: color, specular: color } );
 	for (i = 0; i < 6; i++)
 	{
-		var geometry = new THREE.BoxGeometry( width[i], height[i], depth[i] );
-		var material = new THREE.MeshPhongMaterial( { color: color[i], specular: color[i] } );
+		var geometry = new THREE.BoxGeometry( width[i], height[i], depth[i] );		
 		var sata = new THREE.Mesh( geometry, material );
 		sata.position.set(xx + pos[i][0], yy + pos[i][1], zz + pos[i][2]);
 		sata.receiveShadow = true;
 		sata.castShadow = true;
-		scene.add( sata );
+		//scene.add( sata );
+		group.add( sata );
 	}
+	group.name = 'SATA';
+	scene.add( group );
 	geometry.dispose();
 	material.dispose();
 }
@@ -107,6 +104,7 @@ function SATA(scene,color,xx,yy,zz)
 // SouthBridge
 function SouthBridge(scene,color,xx,yy,zz)
 {
+	var group = new THREE.Object3D();
 	var black10,white80;	
 	if (color == 0x0d0d0d)
 	{
@@ -125,7 +123,8 @@ function SouthBridge(scene,color,xx,yy,zz)
 	SouthBridge.position.set(xx, yy, zz);
 	SouthBridge.receiveShadow = true;
 	SouthBridge.castShadow = true;
-	scene.add( SouthBridge );
+	//scene.add( SouthBridge );
+	group.add( SouthBridge );
 	//chip
 	var geometry = new THREE.CylinderGeometry( 5, 5, 1, 8 );
 	var material = new THREE.MeshPhongMaterial( { color: black10 } );
@@ -134,7 +133,8 @@ function SouthBridge(scene,color,xx,yy,zz)
 	SouthBridge.rotation.y = Math.PI / 8;
 	SouthBridge.receiveShadow = true;
 	SouthBridge.castShadow = true;
-	scene.add( SouthBridge );	
+	//scene.add( SouthBridge );
+	group.add( SouthBridge );
 	// Text
 	var loader = new THREE.FontLoader();
 	loader.load( 'js/helvetiker_regular.typeface.js', function ( font ) {
@@ -149,8 +149,11 @@ function SouthBridge(scene,color,xx,yy,zz)
 		mesh.rotation.x = -Math.PI / 2;
 		mesh.castShadow = true;
 		mesh.receiveShadow = true;
-		scene.add( mesh );
+		//scene.add( mesh );
+		group.add( mesh );
 	});
+	group.name = 'SouthBridge';
+	scene.add( group );
 	geometry.dispose();
 	material.dispose();
 }
@@ -158,6 +161,7 @@ function SouthBridge(scene,color,xx,yy,zz)
 // Battery
 function Battery(scene,color,xx,yy,zz)
 {
+	var group = new THREE.Object3D();
 	var black;
 	if (color == 0x0d0d0d)
 		black = color;
@@ -176,16 +180,19 @@ function Battery(scene,color,xx,yy,zz)
 		cylinder.position.set(xx, yy, zz);
 		cylinder.receiveShadow = true;
 		cylinder.castShadow = true;
-		scene.add( cylinder );
+		//scene.add( cylinder );
+		group.add( cylinder );
 	}	
 	//tetragonaki
 	var geometry = new THREE.BoxGeometry( 2, 2,2 );
-	var material = new THREE.MeshPhongMaterial( { color: black, specular: black } );
 	var box = new THREE.Mesh( geometry, material );
 	box.position.set(xx, yy+0.5, zz-3);
 	box.receiveShadow = true;
 	box.castShadow = true;
-	scene.add( box );
+	//scene.add( box );
+	group.add( box );
+	group.name = 'Battery';
+	scene.add( group );
 	geometry.dispose();
 	material.dispose();	
 }
@@ -193,6 +200,7 @@ function Battery(scene,color,xx,yy,zz)
 // RAM
 function RAM(scene,color,xx,yy,zz,chip)
 {
+	var group = new THREE.Object3D();
 	var black;	
 	if (color == 0x0d0d0d)
 	{
@@ -220,7 +228,8 @@ function RAM(scene,color,xx,yy,zz,chip)
 		ram.rotation.x = rot[i];
 		ram.receiveShadow = true;
 		ram.castShadow = true;
-		scene.add( ram );
+		//scene.add( ram );
+		group.add( ram );
 	}
 	//RAM card
     if (chip==true) 
@@ -231,7 +240,8 @@ function RAM(scene,color,xx,yy,zz,chip)
 		ram.position.set(xx, yy+3, zz);
 		ram.receiveShadow = true;
 		ram.castShadow = true;
-		scene.add( ram );
+		//scene.add( ram );
+		group.add( ram );
 	  
 		var nofchips = 8
 		var geometry = new THREE.BoxGeometry( 1, 2.5, 25/(nofchips+5) );
@@ -242,9 +252,12 @@ function RAM(scene,color,xx,yy,zz,chip)
 			ram.position.set(xx, yy+3.5, zz+i*2.5-10);
 			ram.receiveShadow = true;
 			ram.castShadow = true;
-			scene.add( ram );
+			//scene.add( ram );
+			group.add( ram );
 		}
     }
+	group.name = 'RAM';
+	scene.add( group );
 	geometry.dispose();
 	material.dispose();
 }
@@ -252,13 +265,17 @@ function RAM(scene,color,xx,yy,zz,chip)
 // Chip
 function Chip(scene,color,xx,yy,zz)
 {
+	var group = new THREE.Object3D();
 	var geometry = new THREE.BoxGeometry( 2, 1, 3 );
 	var material = new THREE.MeshPhongMaterial( { color: color, specular: color } );
 	var box = new THREE.Mesh( geometry, material );
 	box.position.set(xx, yy+0.2, zz);
 	box.receiveShadow = true;
 	box.castShadow = true;
-	scene.add( box );
+	//scene.add( box );
+	group.add( box );
+	group.name = 'Chip';
+	scene.add( group );
 	geometry.dispose();
 	material.dispose();
 }
@@ -266,6 +283,7 @@ function Chip(scene,color,xx,yy,zz)
 // Inductor (Coil)
 function Inductor(scene,color,xx,yy,zz)
 {
+	var group = new THREE.Object3D();
 	var brown30;	
 	if (color == 0x0d0d0d)
 		brown30 = color;
@@ -287,8 +305,11 @@ function Inductor(scene,color,xx,yy,zz)
 		inductor.rotation.set(rot[i][0], rot[i][1], rot[i][2]);
 		inductor.receiveShadow = true;
 		inductor.castShadow = true;
-		scene.add( inductor );
+		//scene.add( inductor );
+		group.add( inductor );
 	}
+	group.name = 'Inductor';
+	scene.add( group );
 	geometry.dispose();
 	material.dispose();
 }
@@ -296,6 +317,7 @@ function Inductor(scene,color,xx,yy,zz)
 // Cooler
 function Cooler(scene,color,xx,yy,zz)
 {
+	var group = new THREE.Object3D();
 	var material = new THREE.MeshPhongMaterial( { color: color, specular: color } );	
 	//katw psuxtra, panw psuxtra
 	var pos = [[0,1,0], [-15,1,-20]];
@@ -310,7 +332,8 @@ function Cooler(scene,color,xx,yy,zz)
 		cooler.position.set(xx + pos[i][0], yy + pos[i][1], zz + pos[i][2]);
 		cooler.receiveShadow = true;
 		cooler.castShadow = true;
-		scene.add( cooler );
+		//scene.add( cooler );
+		group.add( cooler );
 		//dontakia psuxtras
 		for (j = 0; j < width[i]; j++)
 		{
@@ -321,7 +344,8 @@ function Cooler(scene,color,xx,yy,zz)
 				cooler.position.set(xx + j + pos2[i][0], yy + pos2[i][1], zz + k + pos2[i][2]);
 				cooler.receiveShadow = true;
 				cooler.castShadow = true;
-				scene.add( cooler );
+				//scene.add( cooler );
+				group.add( cooler );
 			}
 		}
 		//orizontios swlinas, kathetos swlinas
@@ -335,7 +359,8 @@ function Cooler(scene,color,xx,yy,zz)
 		cylinder.rotation.z = rot[i][1];
 		cylinder.receiveShadow = true;
 		cylinder.castShadow = true;
-		scene.add( cylinder );
+		//scene.add( cylinder );
+		group.add( cylinder );
 	}
 	//gwnia
 	var geometry = new THREE.TorusGeometry( 2.5, 1, 20, 50, 1.5 );
@@ -345,7 +370,10 @@ function Cooler(scene,color,xx,yy,zz)
 	torus.rotation.x = Math.PI / 2;
 	torus.receiveShadow = true;
 	torus.castShadow = true;
-	scene.add( torus );
+	//scene.add( torus );
+	group.add( torus );
+	group.name = 'Cooler';
+	scene.add( group );
 	geometry.dispose();
 	material.dispose();
 }
@@ -353,38 +381,36 @@ function Cooler(scene,color,xx,yy,zz)
 // Power
 function Power(scene,color,xx,yy,zz)
 {
-	var gray25;	
-	if (color == 0x0d0d0d)
-		gray25 = color;
-	else
-		gray25 = 0x404040;
-	color = [gray25, color, color, color, color];
+	var group = new THREE.Object3D();
 	//basi, deksi, mesaio, aristero tmima
 	var pos = [[0,0,0],[1.5,1.5,0],[0,1.5,0],[-1.5,1.5,0]];
 	var width = [3.2, 0.3, 0.3, 0.3];
 	var height = [0.4, 4, 4, 4];
 	var depth =[19.9, 20.3, 20.3, 20.3];
+	var material = new THREE.MeshPhongMaterial( { color: color, specular: color } );
 	for (i = 0; i < 4; i++)
 	{
-		var geometry = new THREE.BoxGeometry( width[i], height[i], depth[i] );
-		var material = new THREE.MeshPhongMaterial( { color: color[i], specular: color[i] } );
+		var geometry = new THREE.BoxGeometry( width[i], height[i], depth[i] );		
 		var power = new THREE.Mesh( geometry, material );
 		power.position.set(xx + pos[i][0], yy + pos[i][1], zz + pos[i][2]);
 		power.receiveShadow = true;
 		power.castShadow = true;
-		scene.add( power );
+		//scene.add( power );
+		group.add( power );
 	}
 	//endiamesa tmimata
 	for (i = 0; i < 21; i=i+2)
 	{
 		var geometry = new THREE.BoxGeometry( 2.8, 4, 0.3 );
-		var material = new THREE.MeshPhongMaterial( { color: color[1], specular: color[1] } );
 		var power = new THREE.Mesh( geometry, material );
 		power.position.set(xx, yy +1.5, zz+i-10);
 		power.receiveShadow = true;
 		power.castShadow = true;
-		scene.add( power );
+		//scene.add( power );
+		group.add( power );
 	}
+	group.name = 'Power';
+	scene.add( group );
 	geometry.dispose();
 	material.dispose();
 }
@@ -392,6 +418,7 @@ function Power(scene,color,xx,yy,zz)
 // CPU
 function CPU(scene,color,xx,yy,zz,fanLight)
 {
+	var group = new THREE.Object3D();
 	var red50, black;	
 	if (color == 0x0d0d0d)
 	{
@@ -411,19 +438,20 @@ function CPU(scene,color,xx,yy,zz,fanLight)
 	cooler.position.set(xx, yy+1, zz);
 	cooler.receiveShadow = true;
 	cooler.castShadow = true;
-	scene.add( cooler );
+	//scene.add( cooler );
+	group.add( cooler );
 	//dontakia psuxtras
 	for (i = 0; i < 18; i++)
 	{
 		for (j = 0; j < 15; j=j+2)
 		{
-			var geometry = new THREE.BoxGeometry( 0.5, 6, 1 );
-			var material = new THREE.MeshPhongMaterial( { color: color, specular: color } );
+			var geometry = new THREE.BoxGeometry( 0.5, 6, 1 );			
 			var cooler = new THREE.Mesh( geometry, material );
 			cooler.position.set(xx+i-8.5, yy+3, zz+j-7);
 			cooler.receiveShadow = true;
 			cooler.castShadow = true;
-			scene.add( cooler );
+			//scene.add( cooler );
+			group.add( cooler );
 		}
 	}
 	//anemistiras
@@ -435,7 +463,8 @@ function CPU(scene,color,xx,yy,zz,fanLight)
 	periblima.position.set(xx, yy+10, zz);
 	periblima.receiveShadow = true;
 	periblima.castShadow = true;
-	scene.add( periblima );
+	//scene.add( periblima );
+	group.add( periblima );
 	//plakes
 	var pos_plate = [6.5,13.2];
 	var pos_mini_cyl = [[[-7,6.5,-6],[7,6.5,-6],[7,6.5,6],[-7,6.5,6]],
@@ -463,7 +492,8 @@ function CPU(scene,color,xx,yy,zz,fanLight)
 		var plakaMesh = plakaBSP.toMesh( material );	
 		plakaMesh.receiveShadow = true;
 		plakaMesh.castShadow = true;
-		scene.add( plakaMesh );
+		//scene.add( plakaMesh );
+		group.add( plakaMesh );
 	}
 	//kokkino xrwma ston anemistiras
 	var material = new THREE.MeshPhongMaterial( { color: red50, specular: red50, side: THREE.DoubleSide,} );
@@ -499,13 +529,17 @@ function CPU(scene,color,xx,yy,zz,fanLight)
 		var light = new THREE.PointLight( 0xFF0000, 100, 50 );
 		light.position.set(xx,yy+10,zz);
 		light.add(spinFan);
-		scene.add(light);
+		//scene.add(light);
+		group.add( light );
 	}
 	else
 	{
 		spinFan.position.set(xx,yy+10,zz);
-		scene.add(spinFan);
+		//scene.add(spinFan);
+		group.add( spinFan );
 	}
+	group.name = 'CPU';
+	scene.add( group );
 	geometry.dispose();
 	material.dispose();
 }
@@ -514,6 +548,7 @@ function CPU(scene,color,xx,yy,zz,fanLight)
 // Ports
 function Ports(scene,color,xx,yy,zz,ethrnetLight)
 {
+	var group = new THREE.Object3D();
 	//Port global settings
 	var stdCompLength=5;
 	var tallCompHeight=7;
@@ -563,7 +598,8 @@ function Ports(scene,color,xx,yy,zz,ethrnetLight)
 			usbport.position.set(xx + pos[i][0],yy + pos[i][1],zz + pos[i][2]);
 			usbport.receiveShadow = true;
 			usbport.castShadow = true;
-			scene.add( usbport );
+			//scene.add( usbport );
+			group.add( usbport );
 		}
 	}
 
@@ -594,7 +630,8 @@ function Ports(scene,color,xx,yy,zz,ethrnetLight)
 				hdmi.rotation.x = rotations[rotationindex];
 			hdmi.receiveShadow = true;
 			hdmi.castShadow = true;
-			scene.add( hdmi );
+			//scene.add( hdmi );
+			group.add( hdmi );
 		}
 	}
 	
@@ -615,7 +652,8 @@ function Ports(scene,color,xx,yy,zz,ethrnetLight)
 			usbport.position.set(xx + pos[i][0],yy + pos[i][1],zz + pos[i][2]);;
 			usbport.receiveShadow = true;
 			usbport.castShadow = true;
-			scene.add( usbport );
+			//scene.add( usbport );
+			group.add( usbport );
 		}
 		
 		//ethernet dontakia gold
@@ -628,7 +666,8 @@ function Ports(scene,color,xx,yy,zz,ethrnetLight)
 			usbport.position.set(xx-2,yy+4,zz-2.5+0.5*i);
 			usbport.receiveShadow = true;
 			usbport.castShadow = true;
-			scene.add( usbport );
+			//scene.add( usbport );
+			group.add( usbport );
 		}
 		
 		//ethernet lights		
@@ -645,12 +684,14 @@ function Ports(scene,color,xx,yy,zz,ethrnetLight)
 				var light = new THREE.PointLight( lampakiaLight[i], 5, 5 );
 				light.position.set(xx+pos[i][0],yy+pos[i][1],zz+pos[i][2]);
 				light.add(usbport);
-				scene.add(light);
+				//scene.add(light);
+				group.add( light );
 			}
 			else
 			{
 				usbport.position.set(xx+pos[i][0],yy+pos[i][1],zz+pos[i][2]);
-				scene.add( usbport );
+				//scene.add( usbport );
+				group.add( usbport );
 			}
 		}
 	}
@@ -658,21 +699,23 @@ function Ports(scene,color,xx,yy,zz,ethrnetLight)
 	// Gray Boxes
 	function biggraybox(scene,xx,yy,zz,usbBoxZdisp,color,black)
 	{
-		var colortmp = [color, black, color, black, color, color, black];
-		//box, black right, gray50 left, black left, gray50 top, gray50 back, black back
-		var pos = [[0,3,1],[-0.4,3,0.7],[0,3,-4],[-0.4,3,-3.7],[0,6.2,usbBoxZdisp],[2.3,3,usbBoxZdisp],[2,2.8,usbBoxZdisp]];
-		var width = [stdCompLength,stdCompLength-1,stdCompLength,stdCompLength-1,stdCompLength,stdUSBboxWidth,0.1];
-		var height = [tallCompHeight,tallCompHeight-1,tallCompHeight,tallCompHeight-1,stdUSBboxWidth,tallCompHeight,tallCompHeight];
-		var depth = [0.5,0.1,0.5,0.1,stdCompDepth,stdCompDepth,stdCompDepth];
+		//box,  gray50 left, gray50 top, gray50 back, black right, black left, black back
+		var pos = [[0,3,1],[0,3,-4],[0,6.2,usbBoxZdisp],[2.3,3,usbBoxZdisp],[-0.4,3,0.7],[-0.4,3,-3.7],[2,2.8,usbBoxZdisp]];
+		var width = [stdCompLength,stdCompLength,stdCompLength,stdUSBboxWidth,stdCompLength-1,stdCompLength-1,0.1];
+		var height = [tallCompHeight,tallCompHeight,stdUSBboxWidth,tallCompHeight,tallCompHeight-1,tallCompHeight-1,tallCompHeight];
+		var depth = [0.5,0.5,stdCompDepth,stdCompDepth,0.1,0.1,stdCompDepth];
+		var material = new THREE.MeshPhongMaterial( { color: color, specular: color } );
 		for (i=0; i<7; i++)
 		{
 			var geometry = new THREE.BoxGeometry( width[i], height[i], depth[i] );
-			var material = new THREE.MeshPhongMaterial( { color: colortmp[i], specular: colortmp[i] } );
+			if(i==4)
+				var material = new THREE.MeshPhongMaterial( { color: black, specular: black } );
 			var usbport = new THREE.Mesh( geometry, material );
 			usbport.position.set(xx + pos[i][0],yy + pos[i][1],zz + pos[i][2]);;
 			usbport.receiveShadow = true;
 			usbport.castShadow = true;
-			scene.add( usbport );
+			//scene.add( usbport );
+			group.add( usbport );
 		}
 	}
 	
@@ -687,7 +730,8 @@ function Ports(scene,color,xx,yy,zz,ethrnetLight)
 	ports.position.set (xx,yy+3,zz+12);
 	ports.receiveShadow = true;
 	ports.castShadow = true;
-	scene.add( ports );
+	//scene.add( ports );
+	group.add( ports );
 	
 	//sound ports 
 	var numberOfPortLines=3;
@@ -721,7 +765,8 @@ function Ports(scene,color,xx,yy,zz,ethrnetLight)
 			soundports.rotation.z = -Math.PI / 8;
 			soundports.receiveShadow = true;
 			soundports.castShadow = true;
-			scene.add( soundports );
+			//scene.add( soundports );
+			group.add( soundports );
 			
 			//fill the soundport 
 			var cylindergeometry = new THREE.CylinderGeometry( radiusTop, radiusBottom, height );
@@ -732,7 +777,8 @@ function Ports(scene,color,xx,yy,zz,ethrnetLight)
 			soundportDisk.rotation.z = -Math.PI /2;
 			soundportDisk.receiveShadow = true;
 			soundportDisk.castShadow = true;
-			scene.add( soundportDisk );
+			//scene.add( soundportDisk );
+			group.add( soundportDisk );
 		}
 	}
 	
@@ -773,6 +819,8 @@ function Ports(scene,color,xx,yy,zz,ethrnetLight)
 	{
 		createUSBport(scene,xx,yy,zz,color,red50,black,usbBoxZdisp,alignment,portNo);
 	}
+	group.name = 'Ports';
+	scene.add( group );
 	geometry.dispose();
 	material.dispose();
 }
@@ -780,6 +828,7 @@ function Ports(scene,color,xx,yy,zz,ethrnetLight)
 //PINS
 function PINS (scene,color,xx,yy,zz)
 {
+	var group = new THREE.Object3D();
 	var pinsnumber =10;
 	var red50, black, blue50, pinscolor, pinscolor2;	
 	if (color == 0x0d0d0d)
@@ -804,17 +853,17 @@ function PINS (scene,color,xx,yy,zz)
 		var displacements = [[5,0.2,8],[5,0.8,9.2],[5,0.8,6.7],[4.2,0.8,7.9],[5.8,0.8,8.8],[5.8,0.8,7.1]];
 		var colors = [[blue50,blue50],[blue50,blue50],[blue50,blue50],[blue50,blue50],[blue50,blue50],[blue50,blue50]];
 		var usbpinumber=6;
+		var material = new THREE.MeshPhongMaterial( { color: blue50, specular: blue50 } );
 		//base
 		for (i=0;i<usbpinumber;i++){
 			
 			var geometry = new THREE.BoxGeometry( dimensions[i][0],dimensions[i][1],dimensions[i][2] );
-			var material = new THREE.MeshPhongMaterial( { color: colors[i][0], specular: colors[i][1] } );
 			var pins = new THREE.Mesh( geometry, material );
 			pins.position.set(xx+displacements[i][0], yy+displacements[i][1], zz+displacements[i][2]);
 			pins.receiveShadow = true;
 			pins.castShadow = true;
-			scene.add( pins );
-				
+			//scene.add( pins );
+			group.add( pins );
 		}
 		//pins	
 		var pinsnumber =4;
@@ -827,7 +876,8 @@ function PINS (scene,color,xx,yy,zz)
 				pins.position.set(xx+4.7+0.5*pinsx,yy+0.5,zz+7.3+0.5*i);
 				pins.receiveShadow = true;
 				pins.castShadow = true;
-				scene.add( pins );
+				//scene.add( pins );
+				group.add( pins );
 			}
 		}	
 			
@@ -844,9 +894,10 @@ function PINS (scene,color,xx,yy,zz)
 	pins.position.set(xx+5, yy+0.5, zz);
 	pins.receiveShadow = true;
 	pins.castShadow = true;
-	scene.add( pins );
-	//pins	
+	//scene.add( pins );
+	group.add( pins );
 	
+	//pins	
 	var geometry = new THREE.BoxGeometry( 0.1, 0.8, 0.1 );
 	var material = new THREE.MeshPhongMaterial( { color: pinscolor, specular: pinscolor } );
 	for (i=0; i<pinsnumber; i++)
@@ -856,11 +907,16 @@ function PINS (scene,color,xx,yy,zz)
 		  pins.position.set(xx+4.7+0.5*pinsx,yy+1.2,zz-2.1+0.5*i);
 		  pins.receiveShadow = true;
 		  pins.castShadow = true;
-		  scene.add( pins );
+		  //scene.add( pins );
+		  group.add( pins );
 		}
 	}	
 
 	// ================   USB PIN  ================
-		usbconnectors(scene,colors,blue50,pinscolor2,29.3,0.2,12);
-		usbconnectors(scene,colors,blue50,pinscolor2,29.3,0.2,15);	
+	usbconnectors(scene,colors,blue50,pinscolor2,29.3,0.2,zz/2+7);	
+	
+	group.name = 'Pins';
+	scene.add( group );
+	geometry.dispose();
+	material.dispose();
 }
