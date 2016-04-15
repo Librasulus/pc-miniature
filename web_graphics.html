@@ -73,11 +73,11 @@
 				{
 					if ( INTERSECTED != intersects[ 0 ].object ) 
 					{
+						if ( INTERSECTED ) INTERSECTED.material.color.setHex( INTERSECTED.currentHex );
+						INTERSECTED = intersects[ 0 ].object;						
+						INTERSECTED.currentHex = INTERSECTED.material.color.getHex();
 						if ( intersects[ 0 ].object.name != 'mobo'  && intersects[ 0 ].object.name != 'floor')
 						{
-							if ( INTERSECTED ) INTERSECTED.material.color.setHex( INTERSECTED.currentHex );
-							INTERSECTED = intersects[ 0 ].object;						
-							INTERSECTED.currentHex = INTERSECTED.material.color.getHex();
 							INTERSECTED.material.color.setHex( 0xff0000 );
 						}
 					}
